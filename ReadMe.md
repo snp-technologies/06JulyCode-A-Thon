@@ -1,0 +1,1 @@
+Welcome SNP Code-A-Thon Event and this reporsitory is used for attendies to commit the code developed during the event and also for checking sample application code that will be used in your challenges
