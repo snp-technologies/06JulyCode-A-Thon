@@ -1,0 +1,24 @@
+node {
+    stage('checkout') {
+  git url: 'https://github.com/snp-technologies/sample-cicd-dotnet.git'
+}
+    stage('build') {
+         def workspace = env.WORKSPACE
+         echo "${workspace}"
+        //msbuild.exe 'NetFrameworkWebApplication/NetFrameworkWebApplication.sln'
+        sh "ls"
+        bat "\"${tool 'Nuget'}\" restore NetFrameworkWebApplication\\NetFrameworkWebApplication.sln"
+		bat "\"${tool 'MSBuild1'}\" NetFrameworkWebApplication\\NetFrameworkWebApplication.sln /p:Configuration=Release /p:Platform=\"Any CPU\" /p:ProductVersion=1.0.0.${env.BUILD_NUMBER}"
+    }  
+    	node {
+    stage('SonarQube analysis') {
+    // requires SonarQube Scanner 2.8+
+    def scannerHome = tool 'sonar';
+    //withSonarQubeEnv('SonarQube 6.2') {
+      bat "${tool sonar}\\SonarQube.Scanner.MSBuild.exe begin /k:Key"
+      bat 'MSBuild.exe /t:Rebuild'
+      bat "${tool sonar}\\SonarQube.Scanner.MSBuild.exe end"
+    //}
+  } 
+}
+}
